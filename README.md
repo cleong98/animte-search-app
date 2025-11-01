@@ -4,7 +4,7 @@ A modern, responsive anime search application built with React, TypeScript, and 
 
 ## Live Demo
 
-[Add your deployment URL here after deploying to Netlify/Vercel]
+[Anime App Public Hoisting](https://animate-search-app.netlify.app/)
 
 ## Features
 
