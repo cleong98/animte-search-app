@@ -38,7 +38,6 @@ function AnimeCard({ anime, onClick, isLoading = false }: AnimeCardProps) {
 
   return (
     <div className="card-wrapper">
-      {/* Card Image Container */}
       <div
         className={`card-image-container ${
           showExpandedContent ? "card-hover-expanded" : ""
@@ -47,20 +46,16 @@ function AnimeCard({ anime, onClick, isLoading = false }: AnimeCardProps) {
         onMouseLeave={handleMouseLeave}
         onClick={handleClick}
       >
-        {/* Background Image */}
         <CardImage
           imageUrl={anime.images.jpg.image_url}
           webpUrl={anime.images.webp.image_url}
           title={anime.title}
         />
 
-        {/* Normal State Content */}
         {!isHovered && (
           <>
-            {/* Light Gradient Overlay */}
             <div className="absolute inset-0 card-overlay"></div>
 
-            {/* Type Badge - Top Left */}
             {anime.type && (
               <div className="absolute top-3 left-3">
                 <TypeBadge type={anime.type} />
@@ -69,17 +64,14 @@ function AnimeCard({ anime, onClick, isLoading = false }: AnimeCardProps) {
           </>
         )}
 
-        {/* Members Badge - Bottom Left - Always Visible */}
         <div className="absolute bottom-3 left-3 z-10">
           <MembersBadge members={anime.members} />
         </div>
 
-        {/* Score Badge - Bottom Right - Always Visible */}
         <div className="absolute bottom-3 right-3 z-10">
           <ScoreBadge score={anime.score} />
         </div>
 
-        {/* Expanded State Content - Desktop Hover Only */}
         {showExpandedContent && (
           <ExpandedContent
             type={anime.type}
