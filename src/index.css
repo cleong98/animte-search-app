@@ -79,12 +79,23 @@
 .card-wrapper:not(.mobile):hover {
   z-index: 50;
 }
+/* card skeleton */
+.card-image-skeleton-container {
+  @apply relative h-96 rounded-lg overflow-hidden shadow-xl;
+}
+
+/* card info skeleton */
+.card-info-skeleton-container {
+  @apply mt-3;
+}
 
 /* Normal card image container */
 .card-image-container {
-  @apply relative h-96 rounded-lg overflow-hidden shadow-xl cursor-pointer;
+  @apply relative h-96 rounded-lg overflow-hidden shadow-xl;
   transition: transform 150ms ease-out, box-shadow 150ms ease-out;
 }
+
+
 
 /* Hover expanded state - desktop only, pure CSS */
 .card-wrapper:not(.mobile):hover .card-image-container {

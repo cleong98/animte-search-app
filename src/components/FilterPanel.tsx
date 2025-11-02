@@ -71,7 +71,7 @@ const FilterSection = ({
             <button
               key={option.value}
               onClick={() => multiSelect ? handleToggle(value as number) : handleSelect(option.value)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 flex-shrink-0 ${
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shrink-0 ${
                 isSelected
                   ? "bg-primary hover:bg-primary-focus text-primary-content shadow-md"
                   : "bg-base-200 hover:bg-base-300 text-base-content"
