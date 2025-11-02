@@ -15,6 +15,7 @@ import AnimeGrid from "../components/AnimeGrid";
 import Pagination from "../components/Pagination";
 import ErrorAlert from "../components/ErrorAlert";
 import EmptyState from "../components/EmptyState";
+import { FilterPanel } from "../components/FilterPanel";
 
 function SearchPage() {
   const navigate = useNavigate();
@@ -26,11 +27,20 @@ function SearchPage() {
   const cachedQuery = useAppSelector((state) => state.search.cachedQuery);
   const cachedPage = useAppSelector((state) => state.search.cachedPage);
   const cachedData = useAppSelector((state) => state.search.cachedData);
+  const selectedType = useAppSelector((state) => state.search.selectedType);
+  const selectedStatus = useAppSelector((state) => state.search.selectedStatus);
+  const selectedRating = useAppSelector((state) => state.search.selectedRating);
+  const cachedType = useAppSelector((state) => state.search.cachedType);
+  const cachedStatus = useAppSelector((state) => state.search.cachedStatus);
+  const cachedRating = useAppSelector((state) => state.search.cachedRating);
 
   const { data, loading, error, execute } = useApi(animeApi.searchAnime);
 
   const dataQueryRef = useRef<string>("");
   const dataPageRef = useRef<number>(0);
+  const dataTypeRef = useRef<string>("");
+  const dataStatusRef = useRef<string>("");
+  const dataRatingRef = useRef<string>("");
 
   useDebounceSearch({
     searchQuery,
@@ -46,26 +56,38 @@ function SearchPage() {
     if (data) {
       dataQueryRef.current = searchQuery.trim();
       dataPageRef.current = currentPage;
+      dataTypeRef.current = selectedType;
+      dataStatusRef.current = selectedStatus;
+      dataRatingRef.current = selectedRating;
 
       dispatch(
         setCachedData({
           query: searchQuery.trim(),
           page: currentPage,
           data,
+          type: selectedType,
+          status: selectedStatus,
+          rating: selectedRating,
         })
       );
     }
-  }, [data, searchQuery, currentPage, dispatch]);
+  }, [data, searchQuery, currentPage, selectedType, selectedStatus, selectedRating, dispatch]);
 
   const isDataFresh =
     data &&
     dataQueryRef.current === searchQuery.trim() &&
-    dataPageRef.current === currentPage;
+    dataPageRef.current === currentPage &&
+    dataTypeRef.current === selectedType &&
+    dataStatusRef.current === selectedStatus &&
+    dataRatingRef.current === selectedRating;
 
   const isCacheValid =
     cachedData &&
     cachedQuery === searchQuery.trim() &&
-    cachedPage === currentPage;
+    cachedPage === currentPage &&
+    cachedType === selectedType &&
+    cachedStatus === selectedStatus &&
+    cachedRating === selectedRating;
 
   const displayData = isDataFresh ? data : isCacheValid ? cachedData : null;
 
@@ -81,12 +103,26 @@ function SearchPage() {
     navigate(`/${id}`);
   };
 
+  const handleApplyFilters = () => {
+    execute({
+      q: searchQuery.trim(),
+      page: currentPage,
+      limit: 25,
+      type: selectedType,
+      status: selectedStatus,
+      rating: selectedRating,
+    });
+  };
+
   return (
     <>
       <AppBar title="Anime App" />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 max-w-7xl">
-        <SearchBar value={searchQuery} onChange={handleSearchChange} />
+        <div className="relative">
+          <SearchBar value={searchQuery} onChange={handleSearchChange} />
+          <FilterPanel onApplyFilters={handleApplyFilters} />
+        </div>
 
         <div className="min-h-[400px]">
           {error && (
@@ -94,7 +130,14 @@ function SearchPage() {
               message={error.message || "An error occurred. Please try again."}
               showRetry
               onRetry={() =>
-                execute({ q: searchQuery.trim(), page: currentPage, limit: 25 })
+                execute({
+                  q: searchQuery.trim(),
+                  page: currentPage,
+                  limit: 25,
+                  type: selectedType,
+                  status: selectedStatus,
+                  rating: selectedRating,
+                })
               }
             />
           )}

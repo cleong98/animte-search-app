@@ -14,6 +14,13 @@ describe('searchSlice', () => {
     cachedQuery: '',
     cachedPage: 0,
     cachedData: null,
+    selectedType: '',
+    selectedStatus: '',
+    selectedRating: '',
+    isFilterOpen: false,
+    cachedType: '',
+    cachedStatus: '',
+    cachedRating: '',
   };
 
   it('should return initial state', () => {
@@ -65,12 +72,18 @@ describe('searchSlice', () => {
         query: 'test',
         page: 2,
         data: mockSearchResponse,
+        type: 'tv',
+        status: 'airing',
+        rating: 'pg13',
       })
     );
 
     expect(state.cachedQuery).toBe('test');
     expect(state.cachedPage).toBe(2);
     expect(state.cachedData).toEqual(mockSearchResponse);
+    expect(state.cachedType).toBe('tv');
+    expect(state.cachedStatus).toBe('airing');
+    expect(state.cachedRating).toBe('pg13');
   });
 
   it('setCachedData can update existing cache', () => {
@@ -79,6 +92,9 @@ describe('searchSlice', () => {
       cachedQuery: 'old',
       cachedPage: 1,
       cachedData: mockSearchResponse,
+      cachedType: 'movie',
+      cachedStatus: 'complete',
+      cachedRating: 'g',
     };
 
     const state = searchReducer(
@@ -87,11 +103,17 @@ describe('searchSlice', () => {
         query: 'new',
         page: 3,
         data: mockSearchResponse,
+        type: 'tv',
+        status: 'airing',
+        rating: 'pg13',
       })
     );
 
     expect(state.cachedQuery).toBe('new');
     expect(state.cachedPage).toBe(3);
+    expect(state.cachedType).toBe('tv');
+    expect(state.cachedStatus).toBe('airing');
+    expect(state.cachedRating).toBe('pg13');
   });
 
   it('resetSearch returns to initial state', () => {
@@ -101,6 +123,13 @@ describe('searchSlice', () => {
       cachedQuery: 'naruto',
       cachedPage: 5,
       cachedData: mockSearchResponse,
+      selectedType: 'tv',
+      selectedStatus: 'airing',
+      selectedRating: 'pg13',
+      isFilterOpen: true,
+      cachedType: 'tv',
+      cachedStatus: 'airing',
+      cachedRating: 'pg13',
     };
 
     const state = searchReducer(dirtyState, resetSearch());

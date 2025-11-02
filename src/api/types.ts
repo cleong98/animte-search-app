@@ -78,4 +78,46 @@ export interface AnimeSearchParams {
   page?: number;
   limit?: number;
   signal?: AbortSignal;
+  type?: string;
+  status?: string;
+  rating?: string;
 }
+
+// Filter option types
+export type AnimeType = "tv" | "movie" | "ova" | "special" | "ona" | "music" | "cm" | "pv" | "tv_special";
+export type AnimeStatus = "airing" | "complete" | "upcoming";
+export type AnimeRating = "g" | "pg" | "pg13" | "r17" | "r" | "rx";
+
+// Filter options with labels
+export interface FilterOption {
+  value: string;
+  label: string;
+  description?: string;
+}
+
+export const TYPE_OPTIONS: FilterOption[] = [
+  { value: "tv", label: "TV" },
+  { value: "movie", label: "Movie" },
+  { value: "ova", label: "OVA" },
+  { value: "special", label: "Special" },
+  { value: "ona", label: "ONA" },
+  { value: "music", label: "Music" },
+  { value: "cm", label: "CM" },
+  { value: "pv", label: "PV" },
+  { value: "tv_special", label: "TV Special" },
+];
+
+export const STATUS_OPTIONS: FilterOption[] = [
+  { value: "airing", label: "Airing" },
+  { value: "complete", label: "Complete" },
+  { value: "upcoming", label: "Upcoming" },
+];
+
+export const RATING_OPTIONS: FilterOption[] = [
+  { value: "g", label: "G - All Ages", description: "All Ages" },
+  { value: "pg", label: "PG - Children", description: "Children" },
+  { value: "pg13", label: "PG-13 - Teens 13+", description: "Teens 13 or older" },
+  { value: "r17", label: "R-17+", description: "17+ (violence & profanity)" },
+  { value: "r", label: "R+ - Mild Nudity", description: "Mild Nudity" },
+  { value: "rx", label: "Rx - Hentai", description: "Hentai" },
+];

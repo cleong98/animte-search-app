@@ -14,6 +14,9 @@ interface SearchRequestParams {
   q?: string;
   page: number;
   limit: number;
+  type?: string;
+  status?: string;
+  rating?: string;
 }
 
 export const animeApi: AnimeApi = {
@@ -24,6 +27,16 @@ export const animeApi: AnimeApi = {
     };
     if (params.q) {
       searchParams.q = params.q;
+    }
+    // Add filter parameters if they exist
+    if (params.type) {
+      searchParams.type = params.type;
+    }
+    if (params.status) {
+      searchParams.status = params.status;
+    }
+    if (params.rating) {
+      searchParams.rating = params.rating;
     }
     const response = await apiClient.get<AnimeSearchResponse>("/anime", {
       params: searchParams,

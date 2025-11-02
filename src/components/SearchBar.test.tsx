@@ -1,12 +1,28 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+import searchReducer from '../store/searchSlice';
 import SearchBar from './SearchBar';
+
+const createTestStore = () => {
+  return configureStore({
+    reducer: {
+      search: searchReducer,
+    },
+  });
+};
+
+const renderWithProvider = (component: React.ReactElement) => {
+  const store = createTestStore();
+  return render(<Provider store={store}>{component}</Provider>);
+};
 
 describe('SearchBar', () => {
   it('renders input with default placeholder', () => {
     const onChange = vi.fn();
-    render(<SearchBar value="" onChange={onChange} />);
+    renderWithProvider(<SearchBar value="" onChange={onChange} />);
 
     const input = screen.getByPlaceholderText('Search for anime...');
     expect(input).toBeInTheDocument();
@@ -14,7 +30,7 @@ describe('SearchBar', () => {
 
   it('renders input with custom placeholder', () => {
     const onChange = vi.fn();
-    render(<SearchBar value="" onChange={onChange} placeholder="Custom placeholder" />);
+    renderWithProvider(<SearchBar value="" onChange={onChange} placeholder="Custom placeholder" />);
 
     const input = screen.getByPlaceholderText('Custom placeholder');
     expect(input).toBeInTheDocument();
@@ -22,7 +38,7 @@ describe('SearchBar', () => {
 
   it('displays the provided value', () => {
     const onChange = vi.fn();
-    render(<SearchBar value="naruto" onChange={onChange} />);
+    renderWithProvider(<SearchBar value="naruto" onChange={onChange} />);
 
     const input = screen.getByDisplayValue('naruto');
     expect(input).toBeInTheDocument();
@@ -31,7 +47,7 @@ describe('SearchBar', () => {
   it('calls onChange when user types', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<SearchBar value="" onChange={onChange} />);
+    renderWithProvider(<SearchBar value="" onChange={onChange} />);
 
     const input = screen.getByPlaceholderText('Search for anime...');
     await user.type(input, 'n');
@@ -42,7 +58,7 @@ describe('SearchBar', () => {
   it('calls onChange with correct value for each keystroke', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<SearchBar value="" onChange={onChange} />);
+    renderWithProvider(<SearchBar value="" onChange={onChange} />);
 
     const input = screen.getByPlaceholderText('Search for anime...');
     await user.type(input, 'abc');
@@ -56,7 +72,7 @@ describe('SearchBar', () => {
 
   it('does not show clear button when value is empty', () => {
     const onChange = vi.fn();
-    render(<SearchBar value="" onChange={onChange} />);
+    renderWithProvider(<SearchBar value="" onChange={onChange} />);
 
     const clearButton = screen.queryByLabelText('Clear search');
     expect(clearButton).not.toBeInTheDocument();
@@ -64,7 +80,7 @@ describe('SearchBar', () => {
 
   it('shows clear button when value is not empty', () => {
     const onChange = vi.fn();
-    render(<SearchBar value="naruto" onChange={onChange} />);
+    renderWithProvider(<SearchBar value="naruto" onChange={onChange} />);
 
     const clearButton = screen.getByLabelText('Clear search');
     expect(clearButton).toBeInTheDocument();
@@ -73,7 +89,7 @@ describe('SearchBar', () => {
   it('calls onChange with empty string when clear button is clicked', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<SearchBar value="naruto" onChange={onChange} />);
+    renderWithProvider(<SearchBar value="naruto" onChange={onChange} />);
 
     const clearButton = screen.getByLabelText('Clear search');
     await user.click(clearButton);
@@ -83,13 +99,22 @@ describe('SearchBar', () => {
 
   it('hides clear button after clearing', () => {
     const onChange = vi.fn();
-    const { rerender } = render(<SearchBar value="naruto" onChange={onChange} />);
+    const store = createTestStore();
+    const { rerender } = render(
+      <Provider store={store}>
+        <SearchBar value="naruto" onChange={onChange} />
+      </Provider>
+    );
 
     let clearButton = screen.getByLabelText('Clear search');
     expect(clearButton).toBeInTheDocument();
 
     // Simulate clearing the value
-    rerender(<SearchBar value="" onChange={onChange} />);
+    rerender(
+      <Provider store={store}>
+        <SearchBar value="" onChange={onChange} />
+      </Provider>
+    );
 
     clearButton = screen.queryByLabelText('Clear search');
     expect(clearButton).not.toBeInTheDocument();
@@ -97,7 +122,7 @@ describe('SearchBar', () => {
 
   it('has accessible label for clear button', () => {
     const onChange = vi.fn();
-    render(<SearchBar value="test" onChange={onChange} />);
+    renderWithProvider(<SearchBar value="test" onChange={onChange} />);
 
     const clearButton = screen.getByLabelText('Clear search');
     expect(clearButton).toHaveAttribute('aria-label', 'Clear search');
@@ -106,13 +131,22 @@ describe('SearchBar', () => {
   it('input accepts user typing after clear', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
-    const { rerender } = render(<SearchBar value="test" onChange={onChange} />);
+    const store = createTestStore();
+    const { rerender } = render(
+      <Provider store={store}>
+        <SearchBar value="test" onChange={onChange} />
+      </Provider>
+    );
 
     const clearButton = screen.getByLabelText('Clear search');
     await user.click(clearButton);
 
     // Simulate the parent component updating the value
-    rerender(<SearchBar value="" onChange={onChange} />);
+    rerender(
+      <Provider store={store}>
+        <SearchBar value="" onChange={onChange} />
+      </Provider>
+    );
 
     const input = screen.getByPlaceholderText('Search for anime...');
     await user.type(input, 'new');
@@ -125,7 +159,7 @@ describe('SearchBar', () => {
 
   it('clear button shows for single character', () => {
     const onChange = vi.fn();
-    render(<SearchBar value="a" onChange={onChange} />);
+    renderWithProvider(<SearchBar value="a" onChange={onChange} />);
 
     const clearButton = screen.getByLabelText('Clear search');
     expect(clearButton).toBeInTheDocument();
@@ -134,7 +168,7 @@ describe('SearchBar', () => {
   it('handles special characters in input', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<SearchBar value="" onChange={onChange} />);
+    renderWithProvider(<SearchBar value="" onChange={onChange} />);
 
     const input = screen.getByPlaceholderText('Search for anime...');
     await user.type(input, '!@#$');
@@ -150,7 +184,7 @@ describe('SearchBar', () => {
   it('handles spaces in input', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<SearchBar value="" onChange={onChange} />);
+    renderWithProvider(<SearchBar value="" onChange={onChange} />);
 
     const input = screen.getByPlaceholderText('Search for anime...');
     await user.type(input, 'one piece');
