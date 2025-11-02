@@ -17,7 +17,7 @@ export function HeroSection({ anime }: HeroSectionProps) {
             <img
               src={anime.images.jpg.large_image_url}
               alt={anime.title}
-              className="w-48 md:w-56 lg:w-64 rounded-lg shadow-2xl"
+              className="w-48 md:w-56 lg:w-64 aspect-[2/3] object-cover rounded-lg shadow-2xl"
             />
           </div>
 
